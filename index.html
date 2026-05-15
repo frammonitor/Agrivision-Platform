@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriVision AI 🍃 - منصة الذكاء الاصطناعي للزراعة الدقيقة</title>
+    <title>AgriVision AI Pro 🍃 | منصة الذكاء الاصطناعي الهجينة للزراعة الدقيقة</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
     
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --panel-dark: #1e293b;
+            --bg-main: #090d16;
+            --panel-bg: #111827;
+            --panel-border: #1f2937;
             --primary-green: #10b981;
-            --accent-lime: #84cc16;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
+            --accent-lime: #a3e635;
+            --text-light: #f9fafb;
+            --text-muted: #9ca3af;
         }
 
         * {
@@ -27,7 +30,7 @@
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-main);
             color: var(--text-light);
             height: 100vh;
             display: flex;
@@ -35,239 +38,412 @@
             overflow: hidden;
         }
 
-        /* الشريط العلوي */
-        .navbar {
-            background-color: var(--panel-dark);
-            padding: 15px 30px;
+        /* شريط التنقل العلوي المتطور */
+        .header-nav {
+            background: linear-gradient(135deg, #111827, #0f172a);
+            padding: 12px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #334155;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--panel-border);
             z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
-        .brand {
+        .logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 22px;
+            gap: 15px;
+        }
+
+        .logo-area i {
+            font-size: 28px;
+            color: var(--primary-green);
+            filter: drop-shadow(0 0 8px var(--primary-green));
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
             font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-text span {
             color: var(--primary-green);
         }
 
-        .brand span {
-            color: var(--text-light);
+        .logo-text p {
+            font-size: 11px;
+            color: var(--text-muted);
         }
 
-        .status-badge {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid var(--primary-green);
-            color: var(--primary-green);
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 14px;
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .badge {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-lime);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .status-badge .dot {
+        .pulse-dot {
             width: 8px;
             height: 8px;
             background-color: var(--primary-green);
             border-radius: 50%;
-            animation: pulse 1.5s infinite;
+            animation: pulse 1.8s infinite;
         }
 
-        /* المحتوى الرئيسي */
-        .main-container {
+        /* المحتوى الرئيسي للمنصة */
+        .workspace {
             flex: 1;
             display: flex;
             position: relative;
-            height: calc(100vh - 70px);
+            height: calc(100vh - 65px);
         }
 
-        /* لوحة التحكم الجانبية الذكية */
-        .sidebar {
-            width: 380px;
-            background-color: var(--panel-dark);
-            padding: 25px;
+        /* لوحة التحكم الذكية العريضة */
+        .control-panel {
+            width: 400px;
+            background-color: var(--panel-bg);
+            border-left: 1px solid var(--panel-border);
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            box-shadow: -4px 0 20px rgba(0,0,0,0.3);
             z-index: 999;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.5);
             overflow-y: auto;
-            border-left: 1px solid #334155;
         }
 
-        .section-title {
-            font-size: 16px;
+        .panel-tab {
+            padding: 20px;
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        .tab-title {
+            font-size: 14px;
             font-weight: 700;
-            color: var(--accent-lime);
-            margin-bottom: 10px;
+            color: var(--text-light);
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            text-transform: uppercase;
         }
 
-        .card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 15px;
+        .tab-title i {
+            color: var(--primary-green);
         }
 
-        /* أدوات التحليل */
-        .tool-grid {
+        /* الأزرار التفاعلية لمؤشرات الاقمار الصناعية */
+        .tech-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
 
-        .tool-btn {
-            background: #334155;
+        .tech-card {
+            background: #1f2937;
             border: 1px solid transparent;
-            color: var(--text-light);
-            padding: 12px;
-            border-radius: 8px;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
             cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
 
-        .tool-btn:hover {
+        .tech-card:hover {
             border-color: var(--primary-green);
             background: rgba(16, 185, 129, 0.05);
-            color: var(--primary-green);
+            transform: translateY(-2px);
         }
 
-        .tool-btn.active {
-            background: var(--primary-green);
+        .tech-card.active {
+            background: linear-gradient(135deg, #059669, #10b981);
             color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        /* مؤشرات الذكاء الاصطناعي */
-        .ai-metrics {
+        .tech-card i {
+            font-size: 20px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .tech-card span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* قسم الإحصائيات المتطور */
+        .ai-analytics {
+            background: #111827;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .metric-row {
+        .data-row {
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
-            padding: 6px 0;
-            border-bottom: 1px solid #334155;
+            align-items: center;
+            padding: 10px 12px;
+            background: #1f2937;
+            border-radius: 8px;
+            font-size: 13px;
         }
 
-        .metric-row:last-child {
-            border-bottom: none;
-        }
-
-        .metric-value {
+        .data-val {
             font-weight: 700;
-            color: var(--primary-green);
+            color: var(--accent-lime);
         }
 
-        /* الخريطة تفاعلية بالكامل */
-        #map {
+        /* منطقة الخريطة الفضائية */
+        #map-container {
             flex: 1;
             height: 100%;
-            background-color: var(--bg-dark);
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* صندوق الرسم البياني التفاعلي */
+        .chart-box {
+            width: 100%;
+            height: 140px;
+            background: #1f2937;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 15px 10px 5px;
+        }
+
+        .chart-bar {
+            width: 18px;
+            background: var(--primary-green);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+
+        .chart-bar span {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        .chart-bar p {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--text-muted);
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.6; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0.6; }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="brand">
-            <i class="fa-solid fa-seedling"></i>
-            <div>AgriVision <span>AI</span></div>
+    <header class="header-nav">
+        <div class="logo-area">
+            <i class="fa-solid fa-satellite-dish"></i>
+            <div class="logo-text">
+                <h1>AgriVision <span>AI Pro</span></h1>
+                <p>Hybrid Satellite Intelligence & Smart Farming Platform</p>
+            </div>
         </div>
-        <div class="status-badge">
-            <div class="dot"></div>
-            <span>منصة معالجة صور Sentinel-2 الذكية</span>
+        <div class="system-status">
+            <div class="badge"><i class="fa-solid fa-microchip"></i> ResNet50 + Random Forest</div>
+            <div class="badge">
+                <div class="pulse-dot"></div>
+                <span>Sentinel-2 الحية شغال</span>
+            </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="main-container">
+    <div class="workspace">
         
-        <aside class="sidebar">
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+
+        <aside class="control-panel">
             
-            <div>
-                <div class="section-title">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> أدوات معالجة صور الأقمار الصناعية
+            <div class="panel-tab">
+                <div class="tab-title">
+                    <i class="fa-solid fa-sliders"></i> معالجة صور النطاقات الطيفية
                 </div>
-                <div class="card tool-grid">
-                    <button class="tool-btn active"><i class="fa-solid fa-earth-africa"></i> عرض طبيعي</button>
-                    <button class="tool-btn"><i class="fa-solid fa-leaf"></i> مؤشر NDVI</button>
-                    <button class="tool-btn"><i class="fa-solid fa-droplet"></i> رطوبة التربة</button>
-                    <button class="tool-btn"><i class="fa-solid fa-shield-halved"></i> صحة المحصول</button>
-                </div>
-            </div>
-
-            <div>
-                <div class="section-title">
-                    <i class="fa-solid fa-brain"></i> تحليلات الذكاء الاصطناعي (Hybrid Model)
-                </div>
-                <div class="card ai-metrics">
-                    <div class="metric-row">
-                        <span>دقة تصنيف الغطاء النباتي:</span>
-                        <span class="metric-value">94.8%</span>
+                <div class="tech-grid">
+                    <div class="tech-card active" onclick="changeMode('natural')">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>ألوان طبيعية (B4,B3,B2)</span>
                     </div>
-                    <div class="metric-row">
-                        <span>المساحة المحللة المستهدفة:</span>
-                        <span class="metric-value">120 هكتار</span>
+                    <div class="tech-card" onclick="changeMode('ndvi')">
+                        <i class="fa-solid fa-leaf"></i>
+                        <span>مؤشر NDVI الغطائي</span>
                     </div>
-                    <div class="metric-row">
-                        <span>توقع الإجهاد المائي:</span>
-                        <span class="metric-value" style="color: #ef4444;">منخفض</span>
+                    <div class="tech-card" onclick="changeMode('moisture')">
+                        <i class="fa-solid fa-droplet"></i>
+                        <span>مؤشر الرطوبة NDWI</span>
+                    </div>
+                    <div class="tech-card" onclick="changeMode('false')">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>الألوان الزائفة للأشجار</span>
                     </div>
                 </div>
             </div>
 
-            <div>
-                <div class="section-title">
-                    <i class="fa-solid fa-location-dot"></i> إحداثيات الحقل الحالي
+            <div class="panel-tab">
+                <div class="tab-title">
+                    <i class="fa-solid fa-brain"></i> مركز التحليل والذكاء الاصطناعي
                 </div>
-                <div class="card" style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
-                    <i class="fa-solid fa-circle-info" style="color: var(--accent-lime);"></i> انقر على الخريطة لتحديد حقل زراعي معين واستدعاء بيانات القمر الصناعي Sentinel-2 وحساب التوقعات عبر التطبيق الذكي.
+                <div class="ai-analytics">
+                    <div class="data-row">
+                        <span>نوع المحصول المتوقع:</span>
+                        <span class="data-val" id="crop-type">حبوب (قمح/شعير)</span>
+                    </div>
+                    <div class="data-row">
+                        <span>دقة النمذجة الهجينة:</span>
+                        <span class="data-val" style="color: #34d399;">96.2%</span>
+                    </div>
+                    <div class="data-row">
+                        <span>تصنيف صحة التربة والمحصول:</span>
+                        <span class="data-val" id="health-status">ممتازة (مستقر)</span>
+                    </div>
                 </div>
+            </div>
+
+            <div class="panel-tab">
+                <div class="tab-title">
+                    <i class="fa-solid fa-chart-line"></i> التغير الزمني لمؤشر NDVI (منطقة الجلفة)
+                </div>
+                <div class="chart-box">
+                    <div class="chart-bar" style="height: 35%;"><span>0.2</span><p>فيفري</p></div>
+                    <div class="chart-bar" style="height: 60%;"><span>0.4</span><p>مارس</p></div>
+                    <div class="chart-bar" style="height: 85%; background: var(--accent-lime);"><span>0.7</span><p>أفريل</p></div>
+                    <div class="chart-bar" style="height: 50%;"><span>0.3</span><p>ماي</p></div>
+                </div>
+            </div>
+
+            <div class="panel-tab" style="border-bottom: none;">
+                <div class="tab-title">
+                    <i class="fa-solid fa-hand-pointer"></i> أدوات الرسم الذكي
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+                    استخدم شريط الأدوات الموجود على يسار الخريطة لرسم مضلع أو دائرة وتحديد الحقل الزراعي بدقة ليقوم الـ AI بحساب المساحة فوراً.
+                </p>
             </div>
 
         </aside>
 
-        <div id="map"></div>
-
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    
     <script>
-        // إعداد الخريطة لتبدأ من الجزائر (منطقة الجلفة والمناطق الزراعية المحيطة بها)
-        const map = L.map('map').setView([34.67, 3.25], 10);
+        // 1. إعداد الخرائط الأساسية المتعددة وطبقات القمر الصناعي
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Esri Satellite'
+        });
 
-        // إضافة طبقة خريطة قمر صناعي حقيقية واحترافية من Esri
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-        }).addTo(map);
+        const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: 'OpenTopoMap'
+        });
 
-        // إضافة علامة ترحيبية ذكية فوق منطقة الدراسة والتطوير
-        const marker = L.marker([34.67, 3.25]).addTo(map);
-        marker.bindPopup("<b>منصة AgriVision AI</b><br>منطقة التحليل الزراعي ومراقبة الحقول الدقيقة.").openPopup();
+        // تشغيل الخريطة والتركيز على ولاية الجلفة والمناطق الفلاحية المحيطة بها
+        const map = L.map('map', {
+            center: [34.67, 3.25],
+            zoom: 11,
+            layers: [satelliteLayer]
+        });
+
+        // إضافة ميزة التحكم بالطبقات والتبديل بينها في زاوية الشاشة
+        const baseMaps = {
+            "خريطة الأقمار الصناعية (الحية)": satelliteLayer,
+            "الخريطة الطبوغرافية والتضاريس": terrainLayer
+        };
+        L.control.layers(baseMaps, null, { position: 'topleft' }).addTo(map);
+
+        // 2. إعداد ميزة الرسم الفلاحي الحر وتحديد المزارع (Leaflet Draw)
+        const drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+
+        const drawControl = new L.Control.Draw({
+            edit: { featureGroup: drawnItems },
+            draw: {
+                polygon: true,
+                rectangle: true,
+                circle: true,
+                polyline: false,
+                marker: false,
+                circlemarker: false
+            }
+        });
+        map.addControl(drawControl);
+
+        // حدث عند انتهاء المستخدم من رسم المزرعة أو الحقل الزراعي
+        map.on(L.Draw.Event.CREATED, function (event) {
+            const layer = event.layer;
+            drawnItems.addLayer(layer);
+            
+            // محاكاة ذكية للذكاء الاصطناعي عند تحديد الحقل
+            document.getElementById('crop-type').innerText = "قمح صلب (محسن)";
+            document.getElementById('health-status').innerText = "إجهاد مائي خفيف (ينصح بالري)";
+            document.getElementById('health-status').style.color = "#f59e0b";
+            
+            alert("تم تحديد المزرعة بنجاح! يقوم النموذج الهجين الآن بتحليل صور القمر الصناعي Sentinel-2...");
+        });
+
+        // 3. دالة تبديل المؤشرات والتحليلات الطيفية يدوياً
+        function changeMode(mode) {
+            // إزالة الكلاسات النشطة وتحديد الكارد المضغوط عليه
+            document.querySelectorAll('.tech-card').forEach(card => card.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            if(mode === 'ndvi') {
+                document.getElementById('crop-type').innerText = "أشجار مثمرة / غطاء نباتي كثيف";
+                document.getElementById('health-status').innerText = "نشاط كلوروفيل عالٍ جداً";
+                document.getElementById('health-status').style.color = "#10b981";
+            } else if(mode === 'moisture') {
+                document.getElementById('crop-type').innerText = "تحليل الرطوبة والمياه";
+                document.getElementById('health-status').innerText = "نسبة رطوبة التربة: 64%";
+                document.getElementById('health-status').style.color = "#3b82f6";
+            } else {
+                document.getElementById('crop-type').innerText = "حبوب (قمح/شعير)";
+                document.getElementById('health-status').innerText = "ممتازة (مستقر)";
+                document.getElementById('health-status').style.color = "#a3e635";
+            }
+        }
+
+        // إضافة علامة ترحيبية ذكية فوق نقطة المشروع الرئيسية بالجلفة
+        L.marker([34.67, 3.25]).addTo(map)
+            .bindPopup("<b>منصة AgriVision AI Pro</b><br>جاهزة لاستقبال تحليلات الذكاء الاصطناعي الهجين ورسم المزارع.")
+            .openPopup();
     </script>
 </body>
 </html>
+     
